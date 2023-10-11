@@ -85,7 +85,13 @@ llm_config_writer = {
 
 writer = autogen.AssistantAgent(
     name="Writer",
-    system_message="You are a professional content researcher. You specialize at summarizing content of the provided article or blog. Your summaries are detailed and well structured. Use scrape function to get the content based on URL. Add TERMINATE to the end of the message",
+    system_message="""
+    You are a professional content researcher.\
+    You specialize at summarizing content of the provided article or blog.\
+    Your summaries are detailed and well structured.\
+    Use scrape function to get the content based on URL.\
+    Also, you know how to write basic Python scripts.\
+    Add TERMINATE to the end of the message""",
     llm_config=llm_config_writer,
 )
 
@@ -96,7 +102,7 @@ coder = autogen.AssistantAgent(
 
 user_proxy = autogen.UserProxyAgent(
     name="User_proxy",
-    system_message="A human admin who will provide the resources to the Writer. Also you will assign the Coder to save the summaries. You'll run the code provided by the Coder",
+    # system_message="A human admin who will provide the resources to the Writer. Also you will assign the Coder to save the summaries. You'll run the code provided by the Coder",
     code_execution_config={"work_dir": "summaries"},
     is_termination_msg=lambda x: x.get("content", "")
     and x.get("content", "").rstrip().endswith("TERMINATE"),
@@ -112,6 +118,8 @@ user_proxy.initiate_chat(
     writer,
     message="""Summarize the article: https://pub.towardsai.net/langchain-101-part-1-building-simple-q-a-app-90d9c4e815f3""",
 )
-# message="""Summarize the article: https://towardsdatascience.com/introducing-keyllm-keyword-extraction-with-llms-39924b504813""",
 
+# message="""Summarize the article: https://towardsdatascience.com/introducing-keyllm-keyword-extraction-with-llms-39924b504813""",
 # message="""Summarize the article: https://towardsdatascience.com/exploring-gemba-a-new-llm-based-metric-for-translation-quality-assessment-3a3383de6d1f""",
+
+# /home/kris/Documents/SmartNotes/SecondBrain/Evergreen Notes

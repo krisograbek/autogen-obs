@@ -1,28 +1,22 @@
-# filename: summarize_article.py
+with open(
+    "/home/kris/Documents/SmartNotes/SecondBrain/Evergreen Notes/langchain.md", "w"
+) as file:
+    file.write(
+        """
+    ## Main Benefits of LangChain:
+    * It simplifies the use of Large Language Models (LLMs) for specific tasks.
+    * Allows combining the power of LLMs with other programming techniques.
+    * Provides an ability to control and influence LLM's output via prompts.
+    * Memory feature allowing LLM to learn from previous interactions and build a knowledge base.
+    * Offers unique components like Chains, which are sequences of instructions executed to perform a task.
+    * Facilitates the construction of unique and complex chains of instructions that can perform sophisticated operations.
 
-import requests
-from bs4 import BeautifulSoup
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer
-
-def summarize_article(url):
-    response = requests.get(url)
-
-    soup = BeautifulSoup(response.text, 'html.parser')
-    article = soup.find_all('p')
-    article_text = ""
-
-    for element in article:
-        article_text += '\n' + ''.join(element.findAll(text = True))
-        
-    parser = PlaintextParser.from_string(article_text, Tokenizer("english"))
-    summarizer = LsaSummarizer()
-
-    summary = summarizer(parser.document, 10) 
-    summary_list = [str(sentence) for sentence in summary]
-    result = ' '.join(summary_list)
-    return result
-
-url = "https://pub.towardsai.net/langchain-101-part-1-building-simple-q-a-app-90d9c4e815f3"
-print(summarize_article(url))
+    ## Main Modules of LangChain:
+    * **Models**: Large language models trained on massive datasets of text and code.
+    * **Prompts**: Pieces of text that guide the LLM to generate the desired output.
+    * **Chains**: Sequences of instructions the LangChain framework executes to perform a task.
+    * **Memory**: A method of storing data that the LLM can access later.
+    * **Indexes**: Unique data structures to store information about the data content.
+    * **Agents and Tools**: Agents are reusable components that can perform specific tasks, while Tools are function libraries to aid in developing various agents.
+    """
+    )
