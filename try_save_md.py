@@ -19,7 +19,7 @@ config_list = config_list_from_json(
         ],
     },
 )
-llm_config = {"config_list": config_list}
+llm_config = {"config_list": config_list, "seed": 42, "request_timeout": 240}
 
 BROWSERLESS_API_KEY = os.getenv("BROWSERLESS_API_KEY")
 
@@ -62,7 +62,9 @@ def scrape(url: str):
 
 
 def save_summary(content: str, filename: str):
-    obs_dir = "/home/kris/Documents/SmartNotes/SecondBrain/AutoGen/"
+    obs_dir = (
+        "/home/kris/Documents/SmartNotes/SecondBrain/AutoGen/"  # path to Second Brain
+    )
     with open(f"{obs_dir}{filename}", "w") as file:
         file.write(content)
 
@@ -92,7 +94,7 @@ llm_config_writer = {
                 "properties": {
                     "content": {
                         "type": "string",
-                        "description": "The summary on the article in MarkDown format",
+                        "description": "The summary of the article in MarkDown format",
                     },
                     "filename": {
                         "type": "string",
@@ -114,20 +116,14 @@ writer = autogen.AssistantAgent(
     You specialize at summarizing content of the provided article or blog.\
     Your summaries are detailed and well structured.\
     Use scrape function to get the content based on URL.\
-    After your admin approval, use save_summary function to save the generated summary.\
+    Then use save_summary function to save the generated summary.\
     Add TERMINATE to the end of the message""",
     llm_config=llm_config_writer,
 )
 
-coder = autogen.AssistantAgent(
-    name="Coder",
-    llm_config=llm_config,
-)
 
 user_proxy = autogen.UserProxyAgent(
     name="User_proxy",
-    # system_message="A human admin who will provide the resources to the Writer. Also you will assign the Coder to save the summaries. You'll run the code provided by the Coder",
-    code_execution_config={"work_dir": "summaries"},
     is_termination_msg=lambda x: x.get("content", "")
     and x.get("content", "").rstrip().endswith("TERMINATE"),
     human_input_mode="TERMINATE",
@@ -141,9 +137,11 @@ user_proxy = autogen.UserProxyAgent(
 # Start the conversation
 user_proxy.initiate_chat(
     writer,
-    message="""Summarize the article: https://pub.towardsai.net/langchain-101-part-1-building-simple-q-a-app-90d9c4e815f3""",
+    message="""Summarize the article and highlight key takeaways: https://python.plainenglish.io/python-7-mind-blowing-use-cases-of-the-lambda-function-3bb896f866af""",
 )
 
+# message="""Summarize the article and highlight key takeaways: https://python.plainenglish.io/python-7-mind-blowing-use-cases-of-the-lambda-function-3bb896f866af""",
+# message="""Summarize the article: https://pub.towardsai.net/langchain-101-part-1-building-simple-q-a-app-90d9c4e815f3""",
 # message="""Summarize the article: https://towardsdatascience.com/introducing-keyllm-keyword-extraction-with-llms-39924b504813""",
 # message="""Summarize the article: https://towardsdatascience.com/exploring-gemba-a-new-llm-based-metric-for-translation-quality-assessment-3a3383de6d1f""",
 

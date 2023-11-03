@@ -15,11 +15,11 @@ config_list = config_list_from_json(
     filter_dict={
         "model": [
             "gpt-4",
-            "gpt-4-0613",
+            "gpt-4-0613",  # required for function calling
         ],
     },
 )
-llm_config = {"config_list": config_list}
+llm_config = {"config_list": config_list, "seed": 41, "request_timeout": 240}
 
 BROWSERLESS_API_KEY = os.getenv("BROWSERLESS_API_KEY")
 
@@ -90,20 +90,12 @@ writer = autogen.AssistantAgent(
     You specialize at summarizing content of the provided article or blog.\
     Your summaries are detailed and well structured.\
     Use scrape function to get the content based on URL.\
-    Also, you know how to write basic Python scripts.\
     Add TERMINATE to the end of the message""",
     llm_config=llm_config_writer,
 )
 
-coder = autogen.AssistantAgent(
-    name="Coder",
-    llm_config=llm_config,
-)
-
 user_proxy = autogen.UserProxyAgent(
     name="User_proxy",
-    # system_message="A human admin who will provide the resources to the Writer. Also you will assign the Coder to save the summaries. You'll run the code provided by the Coder",
-    code_execution_config={"work_dir": "summaries"},
     is_termination_msg=lambda x: x.get("content", "")
     and x.get("content", "").rstrip().endswith("TERMINATE"),
     human_input_mode="TERMINATE",
@@ -116,10 +108,5 @@ user_proxy = autogen.UserProxyAgent(
 # Start the conversation
 user_proxy.initiate_chat(
     writer,
-    message="""Summarize the article: https://pub.towardsai.net/langchain-101-part-1-building-simple-q-a-app-90d9c4e815f3""",
+    message="""Summarize the article and highlight key takeaways: https://blog.stackademic.com/using-chatgpt-for-web-scraping-a-practical-guide-673fa2bbfac1""",
 )
-
-# message="""Summarize the article: https://towardsdatascience.com/introducing-keyllm-keyword-extraction-with-llms-39924b504813""",
-# message="""Summarize the article: https://towardsdatascience.com/exploring-gemba-a-new-llm-based-metric-for-translation-quality-assessment-3a3383de6d1f""",
-
-# /home/kris/Documents/SmartNotes/SecondBrain/Evergreen Notes

@@ -20,7 +20,6 @@ writer = autogen.AssistantAgent(
 
 user_proxy = autogen.UserProxyAgent(
     name="User_proxy",
-    code_execution_config={"work_dir": "summaries"},
     is_termination_msg=lambda x: x.get("content", "")
     and x.get("content", "").rstrip().endswith("TERMINATE"),
     human_input_mode="TERMINATE",
@@ -30,5 +29,5 @@ user_proxy = autogen.UserProxyAgent(
 # Start the conversation
 user_proxy.initiate_chat(
     writer,
-    message="""Summarize the article: https://pub.towardsai.net/langchain-101-part-1-building-simple-q-a-app-90d9c4e815f3""",
+    message="""Summarize the article: https://blog.stackademic.com/using-chatgpt-for-web-scraping-a-practical-guide-673fa2bbfac1""",
 )
